@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction Syndrome Métabolique</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+        
+        input[type="number"], .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .result-positive {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .result-negative {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prédiction du Syndrome Métabolique</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="age">Âge :</label>
+                <input type="number" id="age" name="age" step="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="sexe">Sexe :</label>
+                <select id="sexe" name="sexe" required class="form-control">
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">Femme</option>
+                    <option value="1">Homme</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="tour_taille">Tour de taille (cm) :</label>
+                <input type="number" id="tour_taille" name="tour_taille" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="imc">Indice de Masse Corporelle (IMC) :</label>
+                <input type="number" id="imc" name="imc" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="glycemie">Glycémie à jeun (mg/dL) :</label>
+                <input type="number" id="glycemie" name="glycemie" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="hdl">HDL (mg/dL) :</label>
+                <input type="number" id="hdl" name="hdl" step="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="trigly">Triglycérides (mg/dL) :</label>
+                <input type="number" id="trigly" name="trigly" step="0.1" required>
+            </div>
+            
+            <button type="submit">Effectuer la prédiction</button>
+        </form>
+        
+        {% if prediction %}
+        <div class="result {% if 'Atteint' in prediction %}result-positive{% else %}result-negative{% endif %}">
+            <h2>Résultat de l'analyse</h2>
+            <p>{{ prediction }}</p>
+            {% if 'Atteint' in prediction %}
+                <p>Nous vous recommandons de consulter un professionnel de santé.</p>
+            {% else %}
+                <p>Continuez à maintenir de bonnes habitudes de vie !</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
