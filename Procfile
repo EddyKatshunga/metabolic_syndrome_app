@@ -1,0 +1,1 @@
+web: gunicorn metabolic_app.wsgi
